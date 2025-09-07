@@ -181,6 +181,10 @@ def display_results(user_data, prediction, probability, risk_level, df_final, ex
 
     st.markdown("### 🔬 Analysis of Risk Factors")
     with st.expander("View detailed contribution of each health metric", expanded=True):
+        st.info(
+            "SHAP’s f(x) represents the model’s raw score (log‑odds), while the probability shown in the 'Patient Risk Profile' is the sigmoid‑transformed version of that score due to the LightGBM model, "
+            "**they are the same prediction expressed in different forms**. ", icon='ℹ️'
+        )
         shap_values = explainer.shap_values(df_final)
 
         if isinstance(shap_values, list) and len(shap_values) > 1:
@@ -237,7 +241,9 @@ def display_recommendations(user_data, risk_level):
     if user_data['Alcohol Consumption'] > 1: key_factors.append("Alcohol Consumption")
 
     st.info(
-        "**General Lifestyle Advice:** Maintaining a balanced diet, regular physical activity (at least 150 minutes per week), and managing stress are beneficial for all risk levels.")
+        "Maintaining a balanced diet, regular physical activity (at least 150 minutes per week), and managing stress are beneficial for all risk levels.",
+    icon='🩷'
+    )
 
     # --- UI ENHANCEMENT: Hospital-specific Call to Action ---
     if risk_level == "High":
@@ -341,10 +347,13 @@ def main():
 
         st.subheader("Why LightGBM?")
         st.markdown(
-            "- **Accuracy**: It excels at finding complex patterns in health data.\n- **Speed**: It is highly efficient, providing near-instant predictions.\n- **Interpretability**: Combined with SHAP, we can understand *why* a prediction was made.")
+            "- **Accuracy**: It excels at finding complex patterns in health data.\n"
+            "- **Speed**: It is highly efficient, providing near-instant predictions.\n"
+            "- **Interpretability**: Combined with SHAP, we can understand *why* a prediction was made.")
 
         st.subheader("Performance Metrics")
-        st.markdown("The model was rigorously evaluated on a blind test set. Below are the key performance indicators.")
+        st.markdown("The model was rigorously trained and evaluated on a set of 10000 individuals. "
+                    "Below are the key performance indicators.")
 
         cols = st.columns(3)
         images = {'classification.png': 'Evaluation Metrics', 'confusion.png': 'Confusion Matrix',
@@ -352,7 +361,7 @@ def main():
         for i, (img_file, caption) in enumerate(images.items()):
             with cols[i]:
                 if os.path.exists(img_file):
-                    st.image(img_file, caption=caption, use_column_width=True)
+                    st.image(img_file, caption=caption, use_container_width=True)
                 else:
                     st.warning(f"Image '{img_file}' not found.")
 
